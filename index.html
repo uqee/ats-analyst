@@ -1,0 +1,212 @@
+<!-- Created by Denis Zhbankov at 12.03.2014 -->
+<!DOCTYPE html>
+<html lang="ru" ng-app="maria">
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>Управление задачами</title>
+  <link rel="shortcut icon" href="./img/fav.ico">
+  <link rel="stylesheet" href="./css/bootstrap.min.css">
+  <link rel="stylesheet" href="./css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="./css/font-awesome.min.css">
+  <link rel="stylesheet" href="./css/angular-xeditable.min.css">
+  <link rel="stylesheet" href="./css/index.min.css">
+</head>
+<body ng-controller="myController">
+  <div class="container" ng-show="!systems.jira && !connection_timeout">
+    <div class="row text-center">
+      <img class="maria" src="./img/maria.png">
+    </div>
+  </div>
+  <div class="container fuckotron hide" ng-class="{'hide': systems.jira || !connection_timeout}">
+    <div class="jumbotron">
+      <h1>Все плохо!</h1>
+      <p>Для нормальной работы придется побегать с бубном. Успехов!:)</p>
+      <p>Если вы читаете этот текст, то у вас хотя бы уже установлен node.js и вы умеете запускать файл start.bat из корневой папки приложения.</p>
+      <p>Во-первых, давайте как-нибудь договоримся, что вы используете <a href="https://www.google.com/intl/en/chrome/browser/" target="_blank">Google Chrome</a>. Нет, не потому что это приложение настолько убого, что работает только в одном браузере (оно не работает только в эксплорерах времен палеозоя (тем не менее, обычно именно такие стоят на компах в АТС)), а потому что для его работы с нашей доисторической версией Жиры пришлось все делать через задницу: это вы наверно уже ощутили. И еще мне лень писать инструкцию для других браузеров (по идее, Firefox тоже должен работать, потому что для него тоже есть это расширение).</p>
+      <p>Установить расширение ForceCORS и настроить его. Специально для вас, друзья, я заготовил <a href="./chrome/settings.json" target="_blank">файл с настройками</a>, которые нужно просто импортировать на странице параметров этого расширения. Если у вас нет интернета, берите <a href="./chrome/ForceCORS_v1.1.crx" target="_blank">мою локальную копию</a>. Чтобы ее установить, придется поставить галку "Developer Mode" на странице расширений и перетащить этот файл туда.</p>
+      <p>Если вы все сделали и все равно все плохо, проверьте что вы залогинены в <a href="http://jira" target="_blank">жире</a>!</p>
+      <p><a href="./img/fox.jpeg" target="_blank" class="btn btn-danger btn-lg">Я ничего не понял!!1#@`</a></p>
+    </div>
+  </div>
+  <div class="container-fluid hide" ng-class="{ 'hide': !systems.jira }">
+    <div class="row">
+      <div class="col-md-12">
+
+          <!-- User label -->
+          <span class="username">{{user}}</span>
+
+          <!-- Bookmarks -->
+          <div class="main">
+
+            <!-- header -->
+            <h3 class="text-center">
+              Любимые задачи&nbsp;<sup><span class="badge cursor-hand hover-bgcolor-info" ng-click="collapse.newTask = !collapse.newTask" ng-mouseover="">{{pinned_tasks.length}}</span></sup>
+            </h3>
+
+            <!-- addition -->
+            <div class="row addition" collapse="collapse.newTask">
+              <div class="col-md-4 col-md-offset-4">
+                <form
+                  ng-class="{'has-error': newTask.error}"
+                  ng-submit="updateLocalTask(newTask);">
+                <div class="input-group">
+                  <input
+                    type="text"
+                    ng-model="newTask.code"
+                    ng-change="validateTaskCode(newTask);"
+                    class="form-control"
+                    placeholder="Код задачи">
+                  <span class="input-group-btn">
+                    <button
+                      type="submit"
+                      class="btn btn-default"
+                      ng-disabled="!newTask.valid">Добавить</button>
+                  </span>
+                </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- list -->
+            <table class="table table-hover table-bordered" ng-show="pinned_tasks.length">
+                <colgroup>
+                  <col span="1" style="width: 1%;">
+                  <col span="1" style="width: 28%;">
+                  <col span="1" style="width: 1%;">
+                  <col span="1" style="width: 1%;">
+                  <col span="1" style="width: 1%;">
+                  <col span="1">
+                  <col span="1" style="width: 1%;">
+                </colgroup>
+              <thead>
+                <tr class="active">
+                  <th class="nowrap">Код</th>
+                  <th>Название</th>
+                  <th class="nowrap">Статус</th>
+                  <th class="nowrap">Исполнитель</th>
+                  <th class="nowrap">Ваш срок</th>
+                  <th>Ваш комментарий</th>
+                  <th class="nowrap text-center">
+                    <i
+                      title="Действия"
+                      class="fa fa-bars color-default"></i>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="task in pinned_tasks | orderBy:'analyst_ends'">
+                  <td class="nowrap">
+                    <a href="{{task.url}}" target="_blank">{{task.code}}</a>
+                  </td>
+                  <td>{{task.name}}</td>
+                  <td class="nowrap">{{task.status}}</td>
+                  <td class="nowrap">{{task.assignee}}</td>
+                  <td class="nowrap">
+                    <span>{{task.analyst_ends | datetime}}</span>
+                    <sup class="dl color-default">{{task.analyst_ends | estdatetime}}</sup>
+                  </td>
+                  <td>
+                    <span
+                      title="Нажмите, чтобы изменить"
+                      editable-textarea="task.local_comment"
+                      e-placeholder="Ваш комментарий"
+                      onbeforesave="updateLocalComment($data, task);"
+                      buttons="no"
+                      e-rows="1"
+                      e-cols="30">{{task.local_comment || 'пусто'}}</span>
+                  </td>
+                  <td class="nowrap">
+                    <i
+                      title="Обновить"
+                      class="fa fa-refresh fa-lg cursor-hand color-default hover-color-primary"
+                      ng-class="{'fa-spin': task.updating}"
+                      ng-click="updateLocalTask(task); $event.stopPropagation();"></i>
+                    <i
+                      title="Удалить"
+                      class="fa fa-trash-o fa-lg cursor-hand color-default hover-color-danger"
+                      ng-click="toggleLocalTask(task); $event.stopPropagation();"></i>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Systems -->
+          <div class="main">
+
+            <!-- header -->
+            <h3 class="text-center">
+              Ваши системы&nbsp;<sup><span class="badge cursor-hand hover-bgcolor-info" ng-click="collapse.newSystem = !collapse.newSystem" ng-mouseover="">{{systems.local.length}}</span></sup>
+            </h3>
+
+            <!-- addition -->
+            <div class="text-center" collapse="collapse.newSystem">
+              <select
+                class="selectpicker"
+                ng-show="systems.jira"
+                ng-model="systems._new"
+                ng-options="system.name group by system.category for system in systems.jira"
+                ng-change="addLocalSystem(systems._new, systems.local);"
+                my-selectpicker="selectpicker"
+                data-width="auto">
+                <option value="">[подберите себе что-нибудь новенькое]</option>
+              </select>
+            </div>
+
+            <!-- list -->
+            <div class="panel-group" id="accordion">
+              <div class="panel panel-default animation" ng-repeat="system in systems.local | orderBy:'code'">
+
+                <div collapse-watcher="system" class="panel-heading" data-toggle="collapse" data-parent="#accordion" href="#collapse{{$index}}">
+                  <span class="panel-title"><strong>{{system.code}}</strong>: {{system.name}}</span>
+                  <span class="pull-right">
+                    <i
+                      title="Обновить"
+                      class="fa fa-refresh fa-lg accordion-group-action color-default hover-color-primary"
+                      ng-show="system.tasks && system.opened"
+                      ng-click="getTasks(system); $event.stopPropagation();"></i>
+                    <i
+                      title="Удалить"
+                      class="fa fa-trash-o fa-lg accordion-group-action color-default hover-color-danger"
+                      ng-click="delLocalSystem(system, systems.local); $event.stopPropagation();"></i>
+                  </span>
+                </div>
+
+                <div id="collapse{{$index}}" class="panel-collapse collapse">
+                  <div class="panel-body">
+
+                    <p class="text-center" collapse="system.tasks">
+                      <img src="./img/panda.png" class="fa-spin"></img>
+                    </p>
+                    <div collapse="!system.tasks">
+                      <div class="task" ng-repeat="task in system.tasks | orderBy:'analyst_ends'">
+                        <div class="container-fluid">
+                          <task></task>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="./js/jquery.min.js"></script>
+  <script type="text/javascript" src="./js/angular.min.js"></script>
+  <script type="text/javascript" src="./js/angular-animate.min.js"></script>
+  <script type="text/javascript" src="./js/angular-local-storage.min.js"></script>
+  <script type="text/javascript" src="./js/angular-sanitize.min.js"></script>
+  <script type="text/javascript" src="./js/angular-xeditable.min.js"></script>
+  <script type="text/javascript" src="./js/angular-jira.min.js"></script>
+  <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="./js/bootstrap-select.min.js"></script>
+  <script type="text/javascript" src="./js/ui-bootstrap-tpls-0.10.0.min.js"></script>
+  <script type="text/javascript" src="./js/index.min.js"></script>
+</body>
+</html>

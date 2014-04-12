@@ -1,0 +1,312 @@
+// variables
+// --------------------------------------------------------
+@color-black: #333;
+
+@color-default: #999;
+@color-primary: #428BCA;
+@color-success: #5CB85C;
+@color-info:    #5BC0DE;
+@color-warning: #F0AD4E;
+@color-danger:  #D9534F;
+
+@color-border: #ddd;
+
+
+// mixins
+// --------------------------------------------------------
+
+.transition(@property: all; @duration: 0.5s; @function: ease; @delay: 0) {
+  -webkit-transition: @arguments;
+     -moz-transition: @arguments;
+       -o-transition: @arguments;
+          transition: @arguments;
+}
+
+.border-radius(@radius: 8px) {
+  -webkit-border-radius: @arguments;
+     -moz-border-radius: @arguments;
+       -o-border-radius: @arguments;
+          border-radius: @arguments;
+}
+
+.cursor-action () {
+  cursor: pointer;
+  cursor: hand;
+}
+
+// bootstrap callouts
+// --------------------------------------------------------
+/* Base styles (regardless of theme) */
+.bs-callout {
+  margin: 20px 0;
+  padding: 15px 30px 15px 15px;
+  border-left: 5px solid #eee;
+}
+
+.bs-callout h1,
+.bs-callout h2,
+.bs-callout h3,
+.bs-callout h4,
+.bs-callout h5,
+.bs-callout h6 {
+  margin-top: 0;
+}
+
+.bs-callout-default h1,
+.bs-callout-default h2,
+.bs-callout-default h3,
+.bs-callout-default h4,
+.bs-callout-default h5,
+.bs-callout-default h6 {
+  color: #969696;
+}
+
+.bs-callout-danger h1,
+.bs-callout-danger h2,
+.bs-callout-danger h3,
+.bs-callout-danger h4,
+.bs-callout-danger h5,
+.bs-callout-danger h6 {
+  color: #B94A48;
+}
+
+.bs-callout-warning h1,
+.bs-callout-warning h2,
+.bs-callout-warning h3,
+.bs-callout-warning h4,
+.bs-callout-warning h5,
+.bs-callout-warning h6 {
+  color: #C09853;
+}
+
+.bs-callout-info h1,
+.bs-callout-info h2,
+.bs-callout-info h3,
+.bs-callout-info h4,
+.bs-callout-info h5,
+.bs-callout-info h6 {
+  color: #3A87AD;
+}
+
+.bs-callout-success h1,
+.bs-callout-success h2,
+.bs-callout-success h3,
+.bs-callout-success h4,
+.bs-callout-success h5,
+.bs-callout-success h6 {
+  color: #3C763D;
+}
+
+.bs-callout p:last-child {
+  margin-bottom: 0;
+}
+
+.bs-callout code,
+.bs-callout .highlight {
+  background-color: #fff;
+}
+
+/* Themes for different contexts */
+.bs-callout-default {
+  background-color: #f0f0f0;
+  border-color: #d5d5d5;
+}
+.bs-callout-danger {
+  background-color: #fcf2f2;
+  border-color: #dFb5b4;
+}
+.bs-callout-warning {
+  background-color: #fefbed;
+  border-color: #f1e7bc;
+}
+.bs-callout-info {
+  background-color: #f0f7fd;
+  border-color: #d0e3f0;
+}
+.bs-callout-success {
+  background-color: #f0f8ec; /*dff0d8*/
+  border-color: #d6e9c6;
+}
+
+
+// rules
+// --------------------------------------------------------
+
+// fix ui bootstrap
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+// accordion animation
+.animation {
+  &.ng-enter {
+    .transition(@property: all; @duration: 0.25s; @function: ease-in; @delay: 0);
+    //opacity: 0;
+    max-height: 0;
+    &.ng-enter-active {
+      //opacity: 1;
+      max-height: 100px;
+    }
+  }
+  &.ng-leave {
+    .transition(@property: max-height; @duration: 0.25s; @function: ease-out; @delay: 0);
+    //opacity: 1;
+    max-height: 100px;
+    &.ng-leave-active {
+      //opacity: 0;
+      max-height: 0;
+    }
+  }
+}
+
+// make accordion headers clickable
+.panel-heading {
+  .cursor-action();
+}
+
+.editable-click {
+  border: none;
+  color: @color-black;
+  &:hover {
+    color: @color-primary;
+    .cursor-action();
+  }
+}
+
+.editable-empty {
+  color: @color-default;
+  &:hover {
+    color: @color-primary;
+  }
+}
+
+// отсутпы категорий в списке систем
+.bootstrap-select.btn-group .dropdown-menu.selectpicker dt {
+  padding-left: 35px;
+}
+
+
+// 1
+
+.hide {
+  display: none;
+}
+
+.maria {
+  padding-top: 100px;
+}
+
+.fuckotron {
+  margin-top: 50px;
+}
+
+.username {
+  border-top: solid 2px @color-info;
+}
+
+.dl {
+  padding-left: 1px;
+}
+
+.main {
+  padding-bottom: 30px;
+  .addition {
+    margin-bottom: 10px;
+  }
+}
+.task {
+  .border-radius(5px);
+  border: solid 1px @color-border;
+  background-color: #fafafa;
+  margin-bottom: 20px;
+
+  .container-fluid {
+    padding: 0;
+
+    .row {
+      margin: 0;
+      padding: 5px 10px 5px 10px;
+    }
+    
+    .task-header {
+      background-color: #eee;
+      div {
+        padding: 0;
+      }
+      .task-link {
+      }
+      .task-title {
+        margin-left: 5px;
+      }
+      .task-bookmark {
+        margin-right: 10px;
+      }
+      .task-status {
+        padding-left: 10px;
+        i {
+          margin: 0 5px 0 5px;
+          color: @color-default;
+        }
+      }
+    }
+
+    .task-body {
+      border-top: dashed 1px @color-border;
+      border-bottom: dashed 1px @color-border;
+      i {
+        margin: 0 2px 0 2px;
+      }
+      .bs-callout {
+        margin: 10px 0;
+      }
+    }
+
+    .task-footer {
+      div {
+        padding: 0;
+      }
+      .label-left {
+        padding: 0 25px 0 2px;
+      }
+      .label-right {
+        padding-left: 10px;
+      }
+    }
+  }
+}
+
+.accordion-group-action {
+  margin-left: 5px;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+tr:not(:hover) > td i {
+  visibility: hidden;
+}
+
+// 2
+.border-left {
+  border-left: solid 1px @color-border;
+}
+
+a.not-underlined {
+  text-decoration: none;
+}
+
+.cursor-hand { .cursor-action(); }
+
+.color-default { color: @color-default; }
+.color-primary { color: @color-primary; }
+.color-success { color: @color-success; }
+.color-info    { color: @color-info; }
+.color-warning { color: @color-warning; }
+.color-danger  { color: @color-danger; }
+
+.hover-bgcolor-primary:hover { background-color: @color-primary; }
+.hover-bgcolor-info:hover { background-color: @color-info; }
+
+.hover-color-default:hover { color: @color-default; }
+.hover-color-danger:hover { color: @color-danger; }
+.hover-color-info:hover { color: @color-info; }
+.hover-color-warning:hover { color: @color-warning; }
+.hover-color-primary:hover { color: @color-primary; }

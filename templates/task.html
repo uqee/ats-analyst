@@ -1,0 +1,76 @@
+<div class="row task-header">
+  <div class="col-md-7">
+    <span class="task-link">
+      <a href="{{task.url}}" target="_blank" class="btn btn-info btn-xs">{{task.code}}</a>
+    </span>
+    <span class="task-title"><strong>{{task.name}}</strong></span>
+  </div>
+  <div class="col-md-5">
+    <span class="task-status pull-right border-left">
+      <span>{{task.status}}</span>
+      <i class="fa fa-hand-o-right"></i>
+      <span>{{task.assignee}}</span>
+    </span>
+    <span class="task-bookmark pull-right" title="Любимая задача">
+      <a href="" ng-click="toggleLocalTask(task);">
+        <i class="fa fa-lg color-danger" ng-class="{'fa-heart-o': !task.pinned, 'fa-heart': task.pinned}"></i>
+      </a>
+    </span>
+  </div>
+</div>
+
+<div class="row task-body">
+  <div class="col-md-4">
+    <div class="bs-callout bs-callout-success" ng-show="task.description">
+      <h4>Описание задачи</h4>
+      <p ng-bind-html="task.description"></p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="bs-callout bs-callout-info" ng-show="task.last_comment.text">
+      <h4>Последний комментарий</h4>
+      <p ng-bind-html="task.last_comment.text"></p>
+      <p class="color-default">
+        <span><a href="{{task.last_comment.author_url}}" target="_blank">{{task.last_comment.author}}</a></span>
+        <span><i class="fa fa-microphone"></i></span>
+        <span>{{task.last_comment.date | datetime}}</span>
+      </p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="bs-callout bs-callout-warning" ng-show="task.analyst_comment">
+      <h4>Комментарий аналитика</h4>
+      <p ng-bind-html="task.analyst_comment"></p>
+    </div>
+  </div>
+
+  <div class="col-md-12">
+    <div class="bs-callout bs-callout-danger" collapse="!task.pinned">
+      <h4>
+        <span>Локальный комментарий</span>
+        <span title="Редактировать">
+          <sup>
+            <i class="fa fa-pencil-square-o color-default hover-color-danger cursor-hand" ng-click="localCommentTrigger.$show()" ng-hide="localCommentTrigger.$visible"></i>
+          </sup>
+        </span>
+      </h4>
+      <p editable-textarea="task.local_comment" onbeforesave="updateLocalComment($data, task);" e-rows="4" e-cols="80" e-form="localCommentTrigger">{{task.local_comment || 'пусто'}}</p>
+    </div>
+  </div>
+</div>
+
+<div class="row task-footer">
+  <div class="col-md-12">
+    <!-- Срок аналитика -->
+    <span title="Срок аналитика"><i class="fa fa-calendar color-default"></i></span>
+    <span class="label-left">{{task.analyst_starts | datetime}}&nbsp;&ndash;&nbsp;{{task.analyst_ends | datetime}}</span>
+    <!-- Срок программиста -->
+    <span title="Начало работы программиста"><i class="fa fa-laptop color-default"></i></span>
+    <span class="label-left">{{task.dev_starts | datetime}}</span>
+    <!-- Последнее обновление -->
+    <span class="label-right pull-right border-left" title="Время последнего изменения задачи в Jira">
+      <!--<span class="icon-right" title="Время последнего изменения задачи в Jira"><i class="fa fa-floppy-o color-default"></i></span>-->
+      <span>{{task.updated | datetime}}</span>
+    </span>
+  </div>
+</div>

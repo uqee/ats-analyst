@@ -1,0 +1,19 @@
+[
+    {
+        "URL": "http://jira/*",
+        "headers": [
+            {
+                "name": "Access-Control-Allow-Origin",
+                "value": "http://localhost:8080"
+            },
+            {
+                "name": "Access-Control-Allow-Credentials",
+                "value": "true"
+            },
+            {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+            }
+        ]
+    }
+]
